@@ -34,4 +34,22 @@ colorSub(A,[_|Ys],T):-
 colorSub([pieza(_,_,_,X)|Xs],[pieza(_,_,_,X)|_],T):-
 	colorSub(Xs,T,T).
 colorSub([],_,_).
+esPar(s(s(X))):-esPar(X).
+esPar(0).
+esEdificioPar([A|B]):-
+	recFila(A,0),esEdificioPar(B).
+esEdificioPar([]).
+
+recFila([r|A],C):-
+	recFila(A,s(C)).
+recFila([am|A],C):-
+	recFila(A,s(C)).
+recFila([a|A],C):-
+	recFila(A,s(C)).
+recFila([v|A],C):-
+	recFila(A,s(C)).
+recFila([b|A],C):-
+	recFila(A,C).
+recFila([],C):-
+	esPar(C).
 	
