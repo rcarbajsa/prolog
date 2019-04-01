@@ -16,7 +16,7 @@ esTorre([G|K]):-
 	esMayor(G,K).
 esMayor(pieza(X,Y,Z,C),[pieza(Q,W,E,R)|K]):-
 	less(X,Q),less(Z,E),esMayor(pieza(Q,W,E,R),K),pieza(X,Y,Z,C),pieza(Q,W,E,R).
-esMayor(_,[]).	
+esMayor(pieza(X,Y,Z,C),[]):-pieza(X,Y,Z,C).	
 alturaTorre(T,A):-esTorre(T),nat(A),sumaAltura(T,A).
 sumaAltura([S|B],A):-sumRec(S,B,0,A).
 sumRec(pieza(X,Y,Z,C),[pieza(Q,W,E,R)|K],P,A):-
