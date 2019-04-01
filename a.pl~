@@ -1,0 +1,17 @@
+less(0,s(X)):-nat(X).
+less(0,0):-true.
+less(s(X),s(Y)):-less(X,Y).
+nat(s(0)):-true.
+nat(s(X)):-nat(X).
+pieza(X,Y,Z,C) :- nat(X),nat(Y),nat(Z),color(C).
+color(r).
+color(am).
+color(b).
+color(v).
+construccion( [pieza(H,J,O,P)|B] ):-pieza(H,J,O,P),construccion([B|Z]).
+esTorre(construccion([G|K])):-
+	esMayor(G,construccion([K|C])),construccion([G|K]).
+esMayor(pieza(X,Y,Z,C),construccion([pieza(Q,W,E,R)|K])):-
+	less(Q,X),less(E,Z),esMayor(pieza(Q,W,E,R),construccion([K|D])),pieza(X,Y,Z,C),pieza(Q,W,E,R).
+esMayor(H,construccion([])):-true.
+construccion([]):-true.	
