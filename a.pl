@@ -26,3 +26,7 @@ sumRec(pieza(X,Y,Z,C),construccion([pieza(Q,W,E,R)|K]),P,A):-
 sumRec(pieza(X,Y,Z,C),construccion([]),P,A):-pieza(X,Y,Z,C),sum(Y,P,J),eq(J,A).
 sum(0,Y,Y):-nat(Y).
 sum(s(X),Y,s(Z)):-sum(X,Y,Z).
+coloresTorre([pieza(X,Y,Z,C)|R],[V|B]):-
+	pieza(X,Y,Z,C),C=V,coloresTorre(R,B).
+coloresTorre([],[]).
+	
