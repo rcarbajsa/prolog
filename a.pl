@@ -1,6 +1,8 @@
 less(0,s(X)):-nat(X).
 less(0,0).
 less(s(X),s(Y)):-less(X,Y).
+menor(s(X),s(Y)):-menor(X,Y).
+menor(0,s(X)):-nat(X).
 eq(s(X),s(Y)):-eq(X,Y).
 eq(0,0).
 nat(0).
@@ -57,7 +59,7 @@ coloresIncluidos(L,T):-
 	colorSub(L,T,T).
 colorSub([pieza(_,_,_,X)|Xs],[pieza(_,_,_,X)|_],T):-
 	colorSub(Xs,T,T).
-colorSub(A,[B|Ys],T):-
+colorSub(A,[_|Ys],T):-
 	colorSub(A,Ys,T).
 
 colorSub([],_,_).
@@ -65,35 +67,35 @@ esPar(s(s(X))):-
 	esPar(X).
 esPar(0).
 esEdificioPar([A|B]):-
-	recFila(A,0),
+	recFilaPar(A,0),
 	esEdificioPar(B).
 esEdificioPar([]).
 
 recFilaPar([r|A],C):-
-	recFila(A,s(C)).
+	recFilaPar(A,s(C)).
 recFilaPar([am|A],C):-
-	recFila(A,s(C)).
+	recFilaPar(A,s(C)).
 recFilaPar([a|A],C):-
-	recFila(A,s(C)).
+	recFilaPar(A,s(C)).
 recFilaPar([v|A],C):-
-	recFila(A,s(C)).
+	recFilaPar(A,s(C)).
 recFilaPar([b|A],C):-
-	recFila(A,C).
+	recFilaPar(A,C).
 recFilaPar([],C):-
 	esPar(C).
 not(Var):-
 	Var,!,fail.
-not(Var).
+not(_).
 
 esEdificioPiramide([L1,L2|R]):-
 	pirComp(L1,L2,0,0),
-	esEdificioPiramide(R).
+	esEdificioPiramide([L2|R]).
+esEdificioPiramide([]).
+
 pirComp(L1,L2,C1,C2):-
 	recFilaPir(L1,C1),
 	recFilaPir(L2,C2),
-	less(C1,C2).
-esEdificioPiramide([]).
-
+	less(C2,s(0)).
 recFilaPir([r|A],C):-
 	recFilaPir(A,s(C)).
 recFilaPir([am|A],C):-
