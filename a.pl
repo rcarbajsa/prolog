@@ -88,22 +88,33 @@ not(Var):-
 not(_).
 
 esEdificioPiramide([L1,L2|R]):-
-	pirComp(L1,L2,0,0),
+	pirComp(L1,L2),
 	esEdificioPiramide([L2|R]).
-esEdificioPiramide([]).
+esEdificioPiramide([_|[]]).
+pirComp(L1,L2):-
+	recFila1(L1,0,L2).
+recFila1([r|A],C,L2):-
+	recFila1(A,s(C),L2).
+recFila1([am|A],C,L2):-
+	recFila1(A,s(C),L2).
+recFila1([a|A],C,L2):-
+	recFila1(A,s(C),L2).
+recFila1([v|A],C,L2):-
+	recFila1(A,s(C),L2).
+recFila1([b|A],C,L2):-
+	recFila1(A,C,L2).
+recFila1([],C,L2) :-
+	recFila2(L2,C,0).
 
-pirComp(L1,L2,C1,C2):-
-	recFilaPir(L1,C1),
-	recFilaPir(L2,C2),
-	less(C2,s(0)).
-recFilaPir([r|A],C):-
-	recFilaPir(A,s(C)).
-recFilaPir([am|A],C):-
-	recFilaPir(A,s(C)).
-recFilaPir([a|A],C):-
-	recFilaPir(A,s(C)).
-recFilaPir([v|A],C):-
-	recFilaPir(A,s(C)).
-recFilaPir([b|A],C):-
-	recFilaPir(A,C).
-recFilaPir([],_).
+recFila2([r|A],C1,C2):-
+	recFila2(A,C1,s(C2)).
+recFila2([am|A],C1,C2):-
+	recFila2(A,C1,s(C2)).
+recFila2([a|A],C1,C2):-
+	recFila2(A,C1,s(C2)).
+recFila2([v|A],C1,C2):-
+	recFila2(A,C1,s(C2)).
+recFila2([b|A],C1,C2):-
+	recFila2(A,C1,C2).
+recFila2([],C1,C2) :-
+	menor(C1,C2).
