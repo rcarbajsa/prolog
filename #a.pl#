@@ -87,7 +87,7 @@ not(Var).
 
 esEdificioPiramide([L1,L2|R]):-
 	pirComp(L1,L2,0,0),
-	esEdificioPiramide(R).
+	esEdificioPiramide([L2|R]).
 pirComp(L1,L2,C1,C2):-
 	recFilaPir(L1,C1),
 	recFilaPir(L2,C2),
