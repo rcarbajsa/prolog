@@ -1,4 +1,4 @@
-%Funciones auxiliares
+%Predicados auxiliares
 dim(s(0)).
 dim(s(X)) :-
 	dim(X).
@@ -40,58 +40,66 @@ pieza(X,Y,Z,C):-
 	dim(Z),
 	color(C).
 
-%esTorre(Construccion):
-esTorre([A|B]) :-
-	esMenor(A,B).	   
+%esTorre(Construccion): Comprueba que la construccion sea una torre,es decir, que cada pieza tenga una longitud y una anchura menor o igual a la siguiente pieza.
 
-esMenor(pieza(X,Y,Z,C),[]) :-
+esTorre([A|B]) :-
+	esMenor(A,B). %esMenor recorre la construccion comparando las piezas 	   
+
+esMenor(pieza(X,Y,Z,C),[]) :- %Caso base
 	pieza(X,Y,Z,C).
 esMenor(pieza(X,Y,Z,C),[pieza(A,D,E,F)|B]) :-
 	menor_o_igual(X,A),
 	menor_o_igual(Z,E),
-	esMenor(pieza(A,D,E,F),B),
 	pieza(X,Y,Z,C),
-	pieza(A,D,E,F).
+	pieza(A,D,E,F),
+	esMenor(pieza(A,D,E,F),B).
 
-%alturaTorre(Construccion,altura):
+%alturaTorre(Construccion,altura):Comprueba que la construcción sea una torre y tenga la misma altura que se pasa como argumento.
+
 alturaTorre(T,A) :-
 	esTorre(T),
 	nat(A),
-	sumaAltura(T,A).
+	sumaAltura(T,A). %sumaAltura recorre la Construccion y suma las alturas de todas las piezas
 sumaAltura([S|B],A) :-
 	sumRec(S,B,0,A).
 sumRec(pieza(_,Y,_,_),[pieza(Q,W,E,R)|K],P,A) :-
 	sum(Y,P,J),
 	sumRec(pieza(Q,W,E,R),K,J,A).
+ %Caso base: Comprueba con el predicado eq (predicado auxiliar) si la suma de las alturas de la torre es igual a A.
 sumRec(pieza(X,Y,Z,C),[],P,A) :-
 	pieza(X,Y,Z,C),
 	sum(Y,P,J),
 	eq(J,A).
 
-%coloresTorre(Construccion,Lista_colores):	
+%coloresTorre(Construccion,Lista_colores):Compara Lista_colores con los colores de la Construccion.
+
 coloresTorre(A,B) :-
 	esTorre(A),
 	colores(A,B).
 colores([pieza(X,Y,Z,C)|R],[V|B]) :-
 	pieza(X,Y,Z,C),
-	C=V,
+	C=V, %Comprueba si los 2 colores son iguales.
 	colores(R,B).
-colores([],[]).
+colores([],[]). %Caso base
 
-%coloresIncluidos(Construccion1,Construccion2):
+%coloresIncluidos(Construccion1,Construccion2):Comprueba si los colores de la Construccio1 están incluidos en los colores de la Construccion2.
+
 coloresIncluidos(L,T):-
 	esTorre(L),
 	esTorre(T),
 	colorSub(L,T,T).
-colorSub([pieza(_,_,_,X)|Xs],[pieza(_,_,_,X)|_],T):-
+%colorSub recorre la lista de colores de las 2 Construcciones.
+%En el caso de que coincidan los colores pasa al siguiente color de la Construccion1 y se vuelve comprobar con los colores de la construccion2.
+colorSub([pieza(_,_,_,X)|Xs],[pieza(_,_,_,X)|_],T):- 
 	colorSub(Xs,T,T).
 colorSub(A,[_|Ys],T):-
 	colorSub(A,Ys,T).
-colorSub([],_,_).
+colorSub([],_,_). %Caso base
 
-%esEdificioPar(Construccion):
+%esEdificioPar(Construccion):Comprueba si cada fila de la Construccion(matriz) tiene un número para de clavos
+
 esEdificioPar([A|B]) :-
-	recFila(A,0),
+	recFila(A,0), %recFila recorre las filas de la Construccion y cuenta el número de elementos que no sean blancos (b).
 	esEdificioPar(B).
 esEdificioPar([]).
 recFila([r|A],C):-
@@ -104,12 +112,13 @@ recFila([v|A],C):-
 	recFila(A,s(C)).
 recFila([b|A],C):-
 	recFila(A,C).
-recFila([],C):-
+recFila([],C):-  %Caso base: Comprueba si el número de clavos de la fila es par.
 	esPar(C).
 
-%esEdificioPiramide(Construccion):
+%esEdificioPiramide(Construccion):Comprueba si el número de clavos de cada fila es menor que el de la fila siguiente.
+
 esEdificioPiramide([L1,L2|R]):-
-	pirComp(L1,L2),
+	pirComp(L1,L2), %pirComp cuenta el número de clavos de 2 filas y las compara para saber si la primera es menor que la segunda.
 	esEdificioPiramide([L2|R]).
 esEdificioPiramide([_|[]]).
 pirComp(L1,L2):-
@@ -124,7 +133,7 @@ recFila1([v|A],C,L2):-
 	recFila1(A,s(C),L2).
 recFila1([b|A],C,L2):-
 	recFila1(A,C,L2).
-recFila1([],C,L2) :-
+recFila1([],C,L2) :- 
 	recFila2(L2,C,0).
 
 recFila2([r|A],C1,C2):-
