@@ -1,54 +1,68 @@
-less(0,s(X)):-nat(X).
-less(0,0).
-less(s(X),s(Y)):-less(X,Y).
-menor(s(X),s(Y)):-menor(X,Y).
-menor(0,s(X)):-nat(X).
-eq(s(X),s(Y)):-eq(X,Y).
-eq(0,0).
-nat(0).
-nat(s(X)):-nat(X).
-dim(s(X)):-dim(X).
 dim(s(0)).
-pieza(X,Y,Z,C) :- dim(X),dim(Y),dim(Z),color(C).
+dim(s(X)) :-
+	dim(X).
+nat(0).
+nat(s(X)) :-
+	nat(X).
 color(r).
-color(am).
 color(a).
 color(v).
-esTorre([G|K]):-
-	esMayor(G,K).
-esMayor(pieza(X,Y,Z,C),[pieza(Q,W,E,R)|K]):-
-	less(X,Q),
-	less(Z,E),
+color(am).
+pieza(X,Y,Z,C):-
+	dim(X),
+	dim(Y),
+	dim(Z),
+	color(C).
+esTorre([A|B]) :-
+	esMenor(A,B).	   
+menor_o_igual(0,X) :-
+	nat(X).
+menor_o_igual(s(X),s(Y)) :-
+	menor_o_igual(X,Y).
+menor(0,X) :-
+	dim(X).
+menor(s(X),s(Y)) :-
+	menor(X,Y).
+esMenor(pieza(X,Y,Z,C),[]) :-
+	pieza(X,Y,Z,C).
+esMenor(pieza(X,Y,Z,C),[pieza(A,D,E,F)|B]) :-
+	menor_o_igual(X,A),
+	menor_o_igual(Z,E),
+	esMenor(pieza(A,D,E,F),B),
 	pieza(X,Y,Z,C),
-	pieza(Q,W,E,R),
-	esMayor(pieza(Q,W,E,R),K).
-
-esMayor(pieza(X,Y,Z,C),[]):-
-	pieza(X,Y,Z,C).	
-alturaTorre(T,A):-
+	pieza(A,D,E,F).
+not(Var) :-
+	Var,
+	!,
+	fail.
+not(_).
+eq(0,0).
+eq(s(X),s(Y)) :-
+	eq(X,Y).
+alturaTorre(T,A) :-
 	esTorre(T),
 	nat(A),
 	sumaAltura(T,A).
-sumaAltura([S|B],A):-
+sumaAltura([S|B],A) :-
 	sumRec(S,B,0,A).
-sumRec(pieza(X,Y,Z,C),[pieza(Q,W,E,R)|K],P,A):-
+sumRec(pieza(X,Y,Z,C),[pieza(Q,W,E,R)|K],P,A) :-
 	sum(Y,P,J),
+	sumRec(pieza(Q,W,E,R),K,J,A),
 	pieza(X,Y,Z,C),
-	pieza(Q,W,E,R),
-	sumRec(pieza(Q,W,E,R),K,J,A).
-
-sumRec(pieza(X,Y,Z,C),[],P,A):-
+	pieza(Q,W,E,R).
+sumRec(pieza(X,Y,Z,C),[],P,A) :-
 	pieza(X,Y,Z,C),
 	sum(Y,P,J),
 	eq(J,A).
-sum(0,Y,Y):-
+sum(0,Y,Y) :-
 	nat(Y).
-sum(s(X),Y,s(Z)):-
+sum(s(X),Y,s(Z)) :-
 	sum(X,Y,Z).
-coloresTorre(L1,L2):-
-	esTorre(L1),
-	colores(L1,L2).
-colores([pieza(X,Y,Z,C)|R],[V|B]):-
+	
+coloresTorre(A,B) :-
+	esTorre(A),
+	colores(A,B).
+colores([pieza(X,Y,Z,C)|R],[V|B]) :-
 	pieza(X,Y,Z,C),
 	C=V,
 	colores(R,B).
@@ -61,31 +75,26 @@ colorSub([pieza(_,_,_,X)|Xs],[pieza(_,_,_,X)|_],T):-
 	colorSub(Xs,T,T).
 colorSub(A,[_|Ys],T):-
 	colorSub(A,Ys,T).
-
 colorSub([],_,_).
-esPar(s(s(X))):-
+esPar(s(s(X))) :-
 	esPar(X).
 esPar(0).
-esEdificioPar([A|B]):-
-	recFilaPar(A,0),
+esEdificioPar([A|B]) :-
+	recFila(A,0),
 	esEdificioPar(B).
 esEdificioPar([]).
-
-recFilaPar([r|A],C):-
-	recFilaPar(A,s(C)).
-recFilaPar([am|A],C):-
-	recFilaPar(A,s(C)).
-recFilaPar([a|A],C):-
-	recFilaPar(A,s(C)).
-recFilaPar([v|A],C):-
-	recFilaPar(A,s(C)).
-recFilaPar([b|A],C):-
-	recFilaPar(A,C).
-recFilaPar([],C):-
+recFila([r|A],C):-
+	recFila(A,s(C)).
+recFila([am|A],C):-
+	recFila(A,s(C)).
+recFila([a|A],C):-
+	recFila(A,s(C)).
+recFila([v|A],C):-
+	recFila(A,s(C)).
+recFila([b|A],C):-
+	recFila(A,C).
+recFila([],C):-
 	esPar(C).
-not(Var):-
-	Var,!,fail.
-not(_).
 
 esEdificioPiramide([L1,L2|R]):-
 	pirComp(L1,L2),
@@ -118,3 +127,4 @@ recFila2([b|A],C1,C2):-
 	recFila2(A,C1,C2).
 recFila2([],C1,C2) :-
 	menor(C1,C2).
+	
