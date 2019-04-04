@@ -1,9 +1,35 @@
+%Funciones auxiliares
 dim(s(0)).
 dim(s(X)) :-
 	dim(X).
 nat(0).
 nat(s(X)) :-
 	nat(X).
+menor(0,X) :-
+	dim(X).
+menor(s(X),s(Y)) :-
+	menor(X,Y).
+not(Var) :-
+	Var,
+	!,
+	fail.
+not(_).
+eq(0,0).
+eq(s(X),s(Y)) :-
+	eq(X,Y).
+esPar(s(s(X))) :-
+	esPar(X).
+esPar(0).
+sum(0,Y,Y) :-
+	nat(Y).
+sum(s(X),Y,s(Z)) :-
+	sum(X,Y,Z).
+menor_o_igual(0,X) :-
+	nat(X).
+menor_o_igual(s(X),s(Y)) :-
+	menor_o_igual(X,Y).
+
+%Comprobacion de colores y de pieza
 color(r).
 color(a).
 color(v).
@@ -13,16 +39,11 @@ pieza(X,Y,Z,C):-
 	dim(Y),
 	dim(Z),
 	color(C).
+
+%esTorre(Construccion):
 esTorre([A|B]) :-
 	esMenor(A,B).	   
-menor_o_igual(0,X) :-
-	nat(X).
-menor_o_igual(s(X),s(Y)) :-
-	menor_o_igual(X,Y).
-menor(0,X) :-
-	dim(X).
-menor(s(X),s(Y)) :-
-	menor(X,Y).
+
 esMenor(pieza(X,Y,Z,C),[]) :-
 	pieza(X,Y,Z,C).
 esMenor(pieza(X,Y,Z,C),[pieza(A,D,E,F)|B]) :-
@@ -31,34 +52,23 @@ esMenor(pieza(X,Y,Z,C),[pieza(A,D,E,F)|B]) :-
 	esMenor(pieza(A,D,E,F),B),
 	pieza(X,Y,Z,C),
 	pieza(A,D,E,F).
-not(Var) :-
-	Var,
-	!,
-	fail.
-not(_).
-eq(0,0).
-eq(s(X),s(Y)) :-
-	eq(X,Y).
+
+%alturaTorre(Construccion,altura):
 alturaTorre(T,A) :-
 	esTorre(T),
 	nat(A),
 	sumaAltura(T,A).
 sumaAltura([S|B],A) :-
 	sumRec(S,B,0,A).
-sumRec(pieza(X,Y,Z,C),[pieza(Q,W,E,R)|K],P,A) :-
+sumRec(pieza(_,Y,_,_),[pieza(Q,W,E,R)|K],P,A) :-
 	sum(Y,P,J),
-	sumRec(pieza(Q,W,E,R),K,J,A),
-	pieza(X,Y,Z,C),
-	pieza(Q,W,E,R).
+	sumRec(pieza(Q,W,E,R),K,J,A).
 sumRec(pieza(X,Y,Z,C),[],P,A) :-
 	pieza(X,Y,Z,C),
 	sum(Y,P,J),
 	eq(J,A).
-sum(0,Y,Y) :-
-	nat(Y).
-sum(s(X),Y,s(Z)) :-
-	sum(X,Y,Z).
-	
+
+%coloresTorre(Construccion,Lista_colores):	
 coloresTorre(A,B) :-
 	esTorre(A),
 	colores(A,B).
@@ -67,6 +77,8 @@ colores([pieza(X,Y,Z,C)|R],[V|B]) :-
 	C=V,
 	colores(R,B).
 colores([],[]).
+
+%coloresIncluidos(Construccion1,Construccion2):
 coloresIncluidos(L,T):-
 	esTorre(L),
 	esTorre(T),
@@ -76,9 +88,8 @@ colorSub([pieza(_,_,_,X)|Xs],[pieza(_,_,_,X)|_],T):-
 colorSub(A,[_|Ys],T):-
 	colorSub(A,Ys,T).
 colorSub([],_,_).
-esPar(s(s(X))) :-
-	esPar(X).
-esPar(0).
+
+%esEdificioPar(Construccion):
 esEdificioPar([A|B]) :-
 	recFila(A,0),
 	esEdificioPar(B).
@@ -96,6 +107,7 @@ recFila([b|A],C):-
 recFila([],C):-
 	esPar(C).
 
+%esEdificioPiramide(Construccion):
 esEdificioPiramide([L1,L2|R]):-
 	pirComp(L1,L2),
 	esEdificioPiramide([L2|R]).
