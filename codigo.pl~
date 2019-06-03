@@ -1,0 +1,3 @@
+menor(A,B,Comp,M):-
+	C=..[Comp|[A|B]],
+	call(C).
