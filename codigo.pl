@@ -39,4 +39,4 @@ recArg(X,Y,A):-
 	menor_o_igual(C1,C2),
 	recArg(X,Y,A1).
 	
-	
+	f
