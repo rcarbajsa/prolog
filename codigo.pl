@@ -52,17 +52,17 @@ lista_hojas(L,H):-
 
 hojas_arbol([L|[]],_,L).
 hojas_arbol(L,C,A):-
-	recA(L,C,R),
-	hojas_arbol(R,C,A).
-recA([],_,_).
-recA([X|[Y|Z]],C,A):-
-	X=tree(V,_,_),
-	Y=tree(W,_,_),
+	recA(L,C,R,Res),
+	hojas_arbol(Res,C,A).
+recA([],_,R,R).
+recA([X|[Y|Z]],C,A,Res):-
+	X=..[_,V,_,_],
+	Y=..[_,W,_,_],
 	menor(V,W,C,M),
-	(A=[] ->append(tree(M,X,Y),A,R)
-	; append(tree(M,X,Y),A,R)) ,
-	recA(Z,C,R).
-recA([X|[]],_,R):-
+	(A=[] ->append([tree(M,X,Y)],A,R);
+	append([tree(M,X,Y)],A,R)) ,
+	recA(Z,C,R,Res).
+recA([X|[]],_,R,_):-
 	append([X],R,Z),
 	recA([],_,Z).
 
