@@ -62,10 +62,11 @@ recA([X|[Y|Z]],C,A,Res):-
 	(A=[] ->append([tree(M,X,Y)],A,R);
 	append([tree(M,X,Y)],A,R)) ,
 	recA(Z,C,R,Res).
-recA([X|[]],_,R,_):-
+recA([X|[]],_,R,Res):-
 	append([X],R,Z),
-	recA([],_,Z).
+	recA([],_,Z,Res).
 
-
+%ordenacion(Arbol,Comp,Orden):-
+	
 
 lista([X|[]],X).
