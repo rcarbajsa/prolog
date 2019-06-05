@@ -52,7 +52,7 @@ lista_hojas(L,H):-
 
 hojas_arbol([L|[]],_,L).
 hojas_arbol(L,C,A):-
-	recA(L,C,R,Res),
+	recA(L,C,_,Res),
 	hojas_arbol(Res,C,A).
 recA([],_,R,R).
 recA([X|[Y|Z]],C,A,Res):-
@@ -66,7 +66,34 @@ recA([X|[]],_,R,Res):-
 	append([X],R,Z),
 	recA([],_,Z,Res).
 
-%ordenacion(Arbol,Comp,Orden):-
+ordenacion(void,_,_).
+ordenacion(Arbol,Comp,Orden):-
+	Arbol=tree(V,_,_),
+	(Orden=[]->append([V],Orden,O);
+	   append([V],Orden,O)),
+	borrar_hoja(Arbol,ArbolR,_,_,_),
+	obtener_hojas(ArbolR,H,Hojas),
+	hojas_arbol(Hojas,Comp,Res),
+	ordenacion(Res,Comp,O).
 	
 
-lista([X|[]],X).
+borrar_hoja(tree(Valor,void,void),ArbolR,Valor,Encontrado,0):-
+	ArbolR=void,
+	Encontrado=1.
+borrar_hoja(tree(Z,H1,H2),A,V,Encontrado,0):-
+	borrar_hoja(H1,ArbolI,V,E1,_),
+	borrar_hoja(H2,ArbolD,V,E2,E1),
+	(E1=1 -> Encontrado=1;
+	 Encontrado=E2),
+	A=tree(Z,ArbolI,ArbolD).
+
+borrar_hoja(Arbol,Arbol,_,0,1).
+
+
+	
+obtener_hojas(tree(V,void,void),Hojas,Res):-
+	(Hojas=[]->append([V],Hojas,Res);
+	    append([V],Hojas,Res)).
+obtener_hojas(tree(_,H1,H2),Hojas,Res2):-
+	obtener_hojas(H1,Hojas,Res1),
+	obtener_hojas(H2,Res1,Res2).
