@@ -71,8 +71,8 @@ ordenacion(Arbol,Comp,Orden):-
 	Arbol=tree(V,_,_),
 	(Orden=[]->append([V],Orden,O);
 	   append([V],Orden,O)),
-	borrar_hoja(Arbol,ArbolR,_,_,_),
-	obtener_hojas(ArbolR,H,Hojas),
+	borrar_hoja(Arbol,ArbolR,_,_,V),
+	obtener_hojas(ArbolR,_,Hojas),
 	hojas_arbol(Hojas,Comp,Res),
 	ordenacion(Res,Comp,O).
 	
@@ -90,10 +90,13 @@ borrar_hoja(tree(Z,H1,H2),A,V,Encontrado,0):-
 borrar_hoja(Arbol,Arbol,_,0,1).
 
 
-	
+obtener_hojas(void,_,0).	
 obtener_hojas(tree(V,void,void),Hojas,Res):-
-	(Hojas=[]->append([V],Hojas,Res);
-	    append([V],Hojas,Res)).
-obtener_hojas(tree(_,H1,H2),Hojas,Res2):-
-	obtener_hojas(H1,Hojas,Res1),
-	obtener_hojas(H2,Res1,Res2).
+	A=tree(V,void,void),
+	(Hojas=[]->append([A],Hojas,Res);
+	    append([A],Hojas,Res)).
+obtener_hojas(tree(_,H1,H2),Hojas,Res):-
+	obtener_hojas(H1,Hojas,ResI),
+	obtener_hojas(H2,ResI,ResD),
+	(ResD=0 -> Res=ResI;
+	 Res=ResD).
