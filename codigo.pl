@@ -15,16 +15,18 @@ menor(A,B,_,B):-
 	A\=B. %En el caso de que no se cumpla call(C) menor devuelve B
 
 
-% menor_o_igual(X,Y): Comprueba si X es menor o igual a Y
+% menor_o_igual comprueba si X es menor o igual a Y
+% menor_o_igual(X,Y)
+
 menor_o_igual(X,_):-
 	var(X). %En el caso de que A o B sea una variable libre => A es igual a B
 menor_o_igual(_,Y):-
 	var(Y).
-menor_o_igual(X,X). %Caso base.
+menor_o_igual(X,X).
 menor_o_igual(X,Y):-
 	functor(X,N1,_),
 	functor(Y,N2,_),
-	menor(N1,N2,@<,X).
+	menor(N1,N2,@<,N1).
 menor_o_igual(X,Y):-
 	compound(X),
 	compound(Y),
@@ -37,14 +39,14 @@ menor_o_igual(X,Y):-
 	functor(X,N,A),
 	functor(Y,N,A),
 	recArg(X,Y,A).
-recArg(_,_,0). %Caso base.
+recArg(_,_,0).
 recArg(X,Y,A):-
+	A > 0,
+	A1 is A-1,
+	recArg(X,Y,A1),
 	arg(A,X,C1),
 	arg(A,Y,C2),
-	A1 is A -1,
-	recArg(X,Y,A1),
-	\+menor_o_igual(C1,C2).
-recArg(_,_,_).
+	menor_o_igual(C1,C2).
 
 %lista_hojas(Lista,Hojas): Dada una lista,
 %te devuelve una lista de hojas de arbol(tree(_,void,void)).
