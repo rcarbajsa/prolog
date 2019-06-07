@@ -53,21 +53,16 @@ lista_hojas(L,H):-
 
 %hojas_arbol(Hojas,Comp,Arbol): Dada una lista de hojas,
 %devuelve un arbol flotante creado con dichas hojas.
-hojas_arbol([L|[]],_,L). %Caso base.
-hojas_arbol(L,C,A):-
-	recA(L,C,_,Res),
-	hojas_arbol(Res,C,A).
-recA([],_,R,R). %Caso base.
-recA([X|[Y|Z]],C,A,Res):-
-	X=..[_,V,_,_],
-	Y=..[_,W,_,_],
-	menor(V,W,C,M),
-	(A=[] ->append([tree(M,X,Y)],A,R);
-	append([tree(M,X,Y)],A,R)) ,
-	recA(Z,C,R,Res).
-recA([X|[]],_,R,Res):-
-	append([X],R,Z),
-	recA([],_,Z,Res).
+hojas_arbol([X|Xs], Comp, A):-
+	hojas_arbol_rec(X,Xs,Comp,A),!.
+	
+hojas_arbol_rec(A,[],_,A).
+hojas_arbol_rec(X,[Y|Ys],Comp,A):-
+	arg(1,X,Rx),
+	arg(1,Y,Ry),
+	menor(Rx,Ry,Comp,M),
+	Aux=..[tree,M,X,Y],
+	hojas_arbol_rec(Aux,Ys,Comp,A).
 
 %ordenacion(Arbol,Comp,Orden): Dado un arbol, mediante un Comp,
 %devuelve una lista Orden con las hojas de dicho arbol.
