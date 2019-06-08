@@ -11,8 +11,8 @@ menor(A,B,Comp,M):-
 	C=..[Comp,A,B],
 	call(C), % Si se cumple call(C) ya no se comprueban más opciones
 	M=A.
-menor(A,B,_,B):-
-	A\=B. %En el caso de que no se cumpla call(C) menor devuelve B
+menor(_,B,_,B).
+	%A\=B.%En el caso de que no se cumpla call(C) menor devuelve B
 
 
 % menor_o_igual comprueba si X es menor o igual a Y
@@ -26,28 +26,63 @@ menor_o_igual(X,X).
 menor_o_igual(X,Y):-
 	functor(X,N1,_),
 	functor(Y,N2,_),
-	menor(N1,N2,@<,N1).
+	N1@<N2.
 menor_o_igual(X,Y):-
 	compound(X),
 	compound(Y),
 	functor(X,N,A1),
 	functor(Y,N,A2),
-	menor(A1,A2,<,A1).
+	A1<A2.
 menor_o_igual(X,Y):-
 	compound(X),
 	compound(Y),
 	functor(X,N,A),
 	functor(Y,N,A),
-	recArg(X,Y,A).
-recArg(_,_,0).
-recArg(X,Y,A):-
+	recArgMenor(X,Y,A).
+recArgMenor(_,_,0).
+recArgMenor(X,Y,A):-
 	A > 0,
 	A1 is A-1,
-	recArg(X,Y,A1),
+	recArgMenor(X,Y,A1),
 	arg(A,X,C1),
 	arg(A,Y,C2),
 	menor_o_igual(C1,C2).
 
+mayor_o_igual(X,_):-
+	var(X). %En el caso de que A o B sea una variable libre => A es igual a B
+mayor_o_igual(_,Y):-
+	var(Y).
+mayor_o_igual(X,X).
+mayor_o_igual(X,Y):-
+	functor(X,N1,_),
+	functor(Y,N2,_),
+	N2@<N1.
+mayor_o_igual(X,Y):-
+	compound(X),
+	compound(Y),
+	functor(X,N,A1),
+	functor(Y,N,A2),
+	A2<A1.
+mayor_o_igual(X,Y):-
+	compound(X),
+	compound(Y),
+	functor(X,N,A),
+	functor(Y,N,A),
+	recArgMayor(X,Y,A).
+recArgMayor(_,_,0).
+recArgMayor(X,Y,A):-
+	A > 0,
+	A1 is A-1,
+	recArgMayor(X,Y,A1),
+	arg(A,X,C1),
+	arg(A,Y,C2),
+	mayor_o_igual(C1,C2).
+
+comp(A,B,Comp,M):-
+	(Comp = menor -> (menor_o_igual(A,B) -> M = A ;
+			     M = B);
+	    (mayor_o_igual(A,B) -> M = A;
+			     M = B)).
 %lista_hojas(Lista,Hojas): Dada una lista,
 %te devuelve una lista de hojas de arbol(tree(_,void,void)).
 lista_hojas(L,H):-
@@ -63,7 +98,7 @@ hojas_arbol_rec(A,[],_,A).
 hojas_arbol_rec(X,[Y|Ys],Comp,A):-
 	arg(1,X,Rx),
 	arg(1,Y,Ry),
-	menor(Rx,Ry,Comp,M),!,
+	comp(Rx,Ry,Comp,M),!,
 	Aux=..[tree,M,X,Y],
 	hojas_arbol_rec(Aux,Ys,Comp,A).
 
@@ -108,7 +143,9 @@ obtener_hojas(tree(_,H1,H2),Hojas,Res):-
 %ordenar(Lista,Comp,Orden): Dada una lista de elementos y un Comp,
 %devuelve la lista ordenada pero utilizando arboles flotantes
 %(Llamando a los metodos creados anteriormente).
-ordenar(Lista,Comp,Orden):-
+ordenar(Lista,C,Orden):-
+	(C = '<' ; C = '=<' ; C = '@<' -> Comp = menor;
+	    Comp = mayor),
 	lista_hojas(Lista,Hojas),
 	hojas_arbol(Hojas,Comp,Arbol),!,
 	ordenacion(Arbol,Comp,Orden),! .
