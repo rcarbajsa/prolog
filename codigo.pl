@@ -10,9 +10,9 @@ alumno_prode('Gonzalez', 'Jurado', 'Gema Maria', '160133').
 menor(A,B,Comp,M):-
 	C=..[Comp,A,B],
 	call(C), % Si se cumple call(C) ya no se comprueban más opciones
-	M=A.
-menor(_,B,_,B).
-	%A\=B.%En el caso de que no se cumpla call(C) menor devuelve B
+	M=A,!.
+menor(A,B,_,B):-
+	A\=B.%En el caso de que no se cumpla call(C) menor devuelve B
 
 
 % menor_o_igual comprueba si X es menor o igual a Y
@@ -70,7 +70,9 @@ recArgMayor(X,Y,A):-
 	arg(A,Y,C2),
 	mayor_o_igual(C1,C2).
 
-comp(A,B,Comp,M):-
+comp(A,B,C,M):-
+	(C = 'menor_o_igual'; C = '<' ; C = '=<' ; C = '@<' -> Comp = menor;
+	Comp = mayor),
 	(Comp = menor -> (menor_o_igual(A,B) -> M = A ;
 			     M = B);
 	    (mayor_o_igual(A,B) -> M = A;
@@ -98,7 +100,7 @@ hojas_arbol_rec(X,[Y|Ys],Comp,A):-
 %devuelve una lista Orden con las hojas de dicho arbol.
 ordenacion(void,_,[]). %Caso base
 ordenacion(Arbol,Comp,Orden):-
-	ordenacionR(Arbol,Comp,[],Orden).
+	ordenacionR(Arbol,Comp,[],Orden),!.
 
 ordenacionR(void,_,Orden,Orden).
 ordenacionR(Arbol,Comp,Acc,Orden):-
@@ -134,9 +136,7 @@ obtener_hojas(tree(_,H1,H2),Hojas,Res):-
 %ordenar(Lista,Comp,Orden): Dada una lista de elementos y un Comp,
 %devuelve la lista ordenada pero utilizando arboles flotantes
 %(Llamando a los metodos creados anteriormente).
-ordenar(Lista,C,Orden):-
-	(C = '<' ; C = '=<' ; C = '@<' -> Comp = menor;
-	    Comp = mayor),
+ordenar(Lista,Comp,Orden):-
 	lista_hojas(Lista,Hojas),
 	hojas_arbol(Hojas,Comp,Arbol),
 	ordenacion(Arbol,Comp,Orden),! .
@@ -145,3 +145,5 @@ ordenar(Lista,C,Orden):-
 push(V,[],[V]).
 push(V,[L|R],[L|T]):-
 	push(V,R,T).
+
+
