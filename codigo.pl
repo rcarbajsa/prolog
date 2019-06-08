@@ -28,14 +28,10 @@ menor_o_igual(X,Y):-
 	functor(Y,N2,_),
 	N1@<N2.
 menor_o_igual(X,Y):-
-	compound(X),
-	compound(Y),
 	functor(X,N,A1),
 	functor(Y,N,A2),
 	A1<A2.
 menor_o_igual(X,Y):-
-	compound(X),
-	compound(Y),
 	functor(X,N,A),
 	functor(Y,N,A),
 	recArgMenor(X,Y,A).
