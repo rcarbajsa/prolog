@@ -110,9 +110,7 @@ ordenacionR(Arbol,Comp,Acc,Orden):-
 	ordenacionR(ArbolR,Comp,N,Orden).
 	
 
-reflotar(tree(Valor,void,void),ArbolR,Valor,Encontrado,0,_):-
-	ArbolR=void,
-	Encontrado=1.
+reflotar(tree(Valor,void,void),void,Valor,1,0,_).
 reflotar(tree(V,H1,H2),A,V,Encontrado,0,C):-
 	reflotar(H1,ArbolI,V,E1,_,C),
 	reflotar(H2,ArbolD,V,E2,E1,C),
