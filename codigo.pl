@@ -106,32 +106,22 @@ ordenacionR(void,_,Orden,Orden).
 ordenacionR(Arbol,Comp,Acc,Orden):-
 	Arbol=tree(V,_,_),
 	push(V,Acc,N),
-	borrar_hoja(Arbol,ArbolR,V,_,_,Comp),!,
+	reflotar(Arbol,ArbolR,V,_,_,Comp),!,
 	ordenacionR(ArbolR,Comp,N,Orden).
 	
 
-borrar_hoja(tree(Valor,void,void),ArbolR,Valor,Encontrado,0,_):-
+reflotar(tree(Valor,void,void),ArbolR,Valor,Encontrado,0,_):-
 	ArbolR=void,
 	Encontrado=1.
-borrar_hoja(tree(V,H1,H2),A,V,Encontrado,0,C):-
-	borrar_hoja(H1,ArbolI,V,E1,_,C),
-	borrar_hoja(H2,ArbolD,V,E2,E1,C),
+reflotar(tree(V,H1,H2),A,V,Encontrado,0,C):-
+	reflotar(H1,ArbolI,V,E1,_,C),
+	reflotar(H2,ArbolD,V,E2,E1,C),
 	(E1=1 -> Encontrado=1;
 	Encontrado=E2),
 	(ArbolI = void -> A = ArbolD;
 	ArbolD = void -> A = ArbolI;
 	ArbolI = tree(VI,_,_),ArbolD = tree(VD,_,_),comp(VI,VD,C,R),A=tree(R,ArbolI,ArbolD)).
-borrar_hoja(Arbol,Arbol,_,0,_,_).
-
-
-obtener_hojas(void,Res,Res). %Caso base.
-obtener_hojas(tree(V,void,void),Hojas,Res):-
-	A=tree(V,void,void),
-	(Hojas=[]->append([A],Hojas,Res);
-	    append([A],Hojas,Res)).
-obtener_hojas(tree(_,H1,H2),Hojas,Res):-
-	obtener_hojas(H1,Hojas,ResI),
-	obtener_hojas(H2,ResI,Res).
+reflotar(Arbol,Arbol,_,0,_,_).
 
 %ordenar(Lista,Comp,Orden): Dada una lista de elementos y un Comp,
 %devuelve la lista ordenada pero utilizando arboles flotantes
