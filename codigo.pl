@@ -104,23 +104,22 @@ ordenacionR(void,_,Orden,Orden).
 ordenacionR(Arbol,Comp,Acc,Orden):-
 	Arbol=tree(V,_,_),
 	push(V,Acc,N),
-	borrar_hoja(Arbol,ArbolR,V,_,_),
-	obtener_hojas(ArbolR,_,Hojas),
-	hojas_arbol(Hojas,Comp,Res),!,
-	ordenacionR(Res,Comp,N,Orden).
+	borrar_hoja(Arbol,ArbolR,V,_,_,Comp),!,
+	ordenacionR(ArbolR,Comp,N,Orden).
 	
 
-borrar_hoja(tree(Valor,void,void),ArbolR,Valor,Encontrado,0):-
+borrar_hoja(tree(Valor,void,void),ArbolR,Valor,Encontrado,0,_):-
 	ArbolR=void,
 	Encontrado=1.
-borrar_hoja(tree(Z,H1,H2),A,V,Encontrado,0):-
-	borrar_hoja(H1,ArbolI,V,E1,_),
-	borrar_hoja(H2,ArbolD,V,E2,E1),
+borrar_hoja(tree(V,H1,H2),A,V,Encontrado,0,C):-
+	borrar_hoja(H1,ArbolI,V,E1,_,C),
+	borrar_hoja(H2,ArbolD,V,E2,E1,C),
 	(E1=1 -> Encontrado=1;
-	 Encontrado=E2),
-	A=tree(Z,ArbolI,ArbolD).
-
-borrar_hoja(Arbol,Arbol,_,0,1).
+	Encontrado=E2),
+	(ArbolI = void -> A = ArbolD;
+	ArbolD = void -> A = ArbolI;
+	ArbolI = tree(VI,_,_),ArbolD = tree(VD,_,_),comp(VI,VD,C,R),A=tree(R,ArbolI,ArbolD)).
+borrar_hoja(Arbol,Arbol,_,0,_,_).
 
 
 obtener_hojas(void,Res,Res). %Caso base.
@@ -139,7 +138,7 @@ ordenar(Lista,C,Orden):-
 	(C = '<' ; C = '=<' ; C = '@<' -> Comp = menor;
 	    Comp = mayor),
 	lista_hojas(Lista,Hojas),
-	hojas_arbol(Hojas,Comp,Arbol),!,
+	hojas_arbol(Hojas,Comp,Arbol),
 	ordenacion(Arbol,Comp,Orden),! .
 
 
