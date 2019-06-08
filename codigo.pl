@@ -54,14 +54,10 @@ mayor_o_igual(X,Y):-
 	functor(Y,N2,_),
 	N2@<N1.
 mayor_o_igual(X,Y):-
-	compound(X),
-	compound(Y),
 	functor(X,N,A1),
 	functor(Y,N,A2),
 	A2<A1.
 mayor_o_igual(X,Y):-
-	compound(X),
-	compound(Y),
 	functor(X,N,A),
 	functor(Y,N,A),
 	recArgMayor(X,Y,A).
